@@ -9,6 +9,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      DB_PASSWORD: ci
+      DATABASE_URL: postgres://postgres:ci@localhost:5432/postgres?sslmode=disable
     steps:
     - uses: actions/checkout@v3
     - name: Set up Go
