@@ -10,11 +10,12 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      POSTGRES_PASSWORD: postgres
       DATABASE_URL: postgres://postgres:postgres@localhost:5432/postgres?sslmode=disable
     services:
       postgres:
         image: postgres
+        env:
+          POSTGRES_PASSWORD: postgres
         # Set health checks to wait until postgres has started
         options: >-
           --health-cmd pg_isready
@@ -32,3 +33,5 @@ jobs:
         go get .
     - name: Build
       run: go build -v ./...
+    - name: Test
+      run: go test -v ./...
