@@ -38,6 +38,40 @@ func getPost(db *sqlx.DB) gin.HandlerFunc {
 	}
 }
 
+func deletePost(db *sqlx.DB) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		idStr := c.Param("id")
+		id, err := strconv.ParseInt(idStr, 10, 64)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, "id is not a number")
+			return
+		}
+		err = database.DeletePostById(db, id)
+		if err != nil {
+			c.JSON(http.StatusNotFound, "not found")
+			return
+		}
+		c.Status(http.StatusOK)
+	}
+}
+
+func deleteAuthor(db *sqlx.DB) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		idStr := c.Param("id")
+		id, err := strconv.ParseInt(idStr, 10, 64)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, "id is not a number")
+			return
+		}
+		err = database.DeleteAuthorById(db, id)
+		if err != nil {
+			c.JSON(http.StatusNotFound, "not found")
+			return
+		}
+		c.Status(http.StatusOK)
+	}
+}
+
 func createPost(db *sqlx.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		title := c.Query("title")
@@ -110,15 +144,17 @@ func Serve(db *sqlx.DB) {
 	postsRoutes := router.Group("/posts")
 	{
 		postsRoutes.GET("/", getAllPosts(db))
-		postsRoutes.GET("/:id", getPost(db))
 		postsRoutes.POST("/", createPost(db))
+		postsRoutes.GET("/:id", getPost(db))
+		postsRoutes.DELETE("/:id", deletePost(db))
 	}
 
 	authorsRoutes := router.Group("/authors")
 	{
 		authorsRoutes.GET("/", getAllAuthors(db))
-		authorsRoutes.GET("/:id", getAuthor(db))
 		authorsRoutes.POST("/", createAuthor(db))
+		authorsRoutes.GET("/:id", getAuthor(db))
+		authorsRoutes.DELETE("/:id", deleteAuthor(db))
 	}
 
 	router.Run()

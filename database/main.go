@@ -26,6 +26,11 @@ func GetPostById(db *sqlx.DB, id int64) (Post, error) {
 	return post, err
 }
 
+func DeletePostById(db *sqlx.DB, id int64) error {
+	_, err := db.Exec("delete from posts where id = $1", id)
+	return err
+}
+
 func AddPost(db *sqlx.DB, post NewPost) (int64, error) {
 	var id int64
 	err := db.QueryRowx( // NOTE: Sadly there is no Named func for this
@@ -56,4 +61,9 @@ func GetAuthorById(db *sqlx.DB, id int64) (Author, error) {
 	author := Author{}
 	err := db.Get(&author, "select * from authors where id = $1", id)
 	return author, err
+}
+
+func DeleteAuthorById(db *sqlx.DB, id int64) error {
+	_, err := db.Exec("delete from authors where id = $1", id)
+	return err
 }
