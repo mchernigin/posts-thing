@@ -107,13 +107,19 @@ func createAuthor(db *sqlx.DB) gin.HandlerFunc {
 func Serve(db *sqlx.DB) {
 	router := gin.Default()
 
-	router.GET("/posts", getAllPosts(db))
-	router.GET("/posts/:id", getPost(db))
-	router.POST("/posts", createPost(db))
+	postsRoutes := router.Group("/posts")
+	{
+		postsRoutes.GET("/", getAllPosts(db))
+		postsRoutes.GET("/:id", getPost(db))
+		postsRoutes.POST("/", createPost(db))
+	}
 
-	router.GET("/authors", getAllAuthors(db))
-	router.GET("/authors/:id", getAuthor(db))
-	router.POST("/authors", createAuthor(db))
+	authorsRoutes := router.Group("/authors")
+	{
+		authorsRoutes.GET("/", getAllAuthors(db))
+		authorsRoutes.GET("/:id", getAuthor(db))
+		authorsRoutes.POST("/", createAuthor(db))
+	}
 
 	router.Run()
 }
