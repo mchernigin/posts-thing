@@ -1,9 +1,10 @@
 package database
 
 import (
-	"github.com/joho/godotenv"
 	"os"
+
 	"github.com/jmoiron/sqlx"
+	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 )
 
@@ -19,10 +20,20 @@ func GetAllPosts(db *sqlx.DB) ([]Post, error) {
 	return posts, err
 }
 
-func AddPost(db *sqlx.DB, post NewPost) error {
-	_, err := db.NamedExec(`insert into posts (title, content, publish_timestamp)
-                            values (:title, :content, :publish_timestamp)`, post)
-	return err
+func GetPostById(db *sqlx.DB, id int64) (Post, error) {
+	post := Post{}
+	err := db.Get(&post, "select * from posts where id = $1", id)
+	return post, err
+}
+
+func AddPost(db *sqlx.DB, post NewPost) (int64, error) {
+	var id int64
+	err := db.QueryRowx( // NOTE: Sadly there is no Named func for this
+		`insert into posts (title, content, publish_timestamp)
+         values ($1, $2, $3) returning id`,
+		post.Title, post.Content, post.PublishTimestamp).Scan(&id)
+
+	return id, err
 }
 
 func GetAllAuthors(db *sqlx.DB) ([]Author, error) {
@@ -31,9 +42,18 @@ func GetAllAuthors(db *sqlx.DB) ([]Author, error) {
 	return authors, err
 }
 
-func AddAuthor(db *sqlx.DB, author NewAuthor) error {
-	_, err := db.NamedExec(`insert into authors (name, surname, website, status)
-                            values (:name, :surname, :website, :status)`,
-		author)
-	return err
+func AddAuthor(db *sqlx.DB, author NewAuthor) (int64, error) {
+	var id int64
+	err := db.QueryRowx( // NOTE: Sadly there is no Named func for this
+		`insert into authors (name, surname, website, status)
+         values ($1, $2, $3, $4) returning id`,
+		author.Name, author.Surname, author.Website, author.Status).Scan(&id)
+
+	return id, err
+}
+
+func GetAuthorById(db *sqlx.DB, id int64) (Author, error) {
+	author := Author{}
+	err := db.Get(&author, "select * from authors where id = $1", id)
+	return author, err
 }

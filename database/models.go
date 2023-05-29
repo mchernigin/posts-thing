@@ -10,7 +10,7 @@ type NewPost struct {
 
 type Post struct {
 	Id int64 `db:"id"`
-    NewPost
+	NewPost
 }
 
 type NewAuthor struct {
@@ -22,6 +22,5 @@ type NewAuthor struct {
 
 type Author struct {
 	Id int64 `db:"id"`
-    NewAuthor
+	NewAuthor
 }
-

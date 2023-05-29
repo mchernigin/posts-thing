@@ -34,7 +34,7 @@ jobs:
       run: go build -v ./...
     - name: Make migration
       run: |
-        go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate@latest 
-        make migration_up 
+        go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate@latest
+        make migration_up
     - name: Test
       run: go test -v ./...
