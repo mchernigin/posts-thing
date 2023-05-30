@@ -18,7 +18,7 @@ func TestDB(t *testing.T) {
 		PublishTimestamp: time.Now(),
 	}
 
-	err = AddPost(db, post)
+	_, err = AddPost(db, post)
 	if err != nil {
 		log.Fatalln(err)
 	}
